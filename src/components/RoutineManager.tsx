@@ -265,11 +265,6 @@ export const RoutineManager: React.FC<RoutineManagerProps> = ({
             ルーティンを追加する
           </button>
         </div>
-      )}e-95"
-          >
-            ルーティンを追加する
-          </button>
-        </div>
       )}
 
       {/* Add Sheet */}
