@@ -247,6 +247,39 @@ export function useRoutines() {
     [saveTasks]
   );
 
+  // Reorder tasks for a specific day
+  const reorderTasks = useCallback(
+    (dayOfWeek: DayOfWeek, sourceIndex: number, destinationIndex: number) => {
+      const dayTasks = tasks.filter((t) => t.dayOfWeek === dayOfWeek);
+      if (
+        sourceIndex < 0 ||
+        sourceIndex >= dayTasks.length ||
+        destinationIndex < 0 ||
+        destinationIndex >= dayTasks.length ||
+        sourceIndex === destinationIndex
+      ) {
+        return;
+      }
+
+      const reorderedDayTasks = Array.from(dayTasks);
+      const [movedTask] = reorderedDayTasks.splice(sourceIndex, 1);
+      reorderedDayTasks.splice(destinationIndex, 0, movedTask);
+
+      let dayTaskPointer = 0;
+      const newTasks = tasks.map((task) => {
+        if (task.dayOfWeek === dayOfWeek) {
+          const replacement = reorderedDayTasks[dayTaskPointer];
+          dayTaskPointer++;
+          return replacement;
+        }
+        return task;
+      });
+
+      saveTasks(newTasks);
+    },
+    [tasks, saveTasks]
+  );
+
   return {
     tasks,
     isLoaded,
@@ -255,6 +288,7 @@ export function useRoutines() {
     addTask,
     updateTask,
     deleteTask,
+    reorderTasks,
     copyTasksToDays,
     resetToDefaults,
     exportJSON,

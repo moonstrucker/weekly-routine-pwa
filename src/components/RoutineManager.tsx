@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Task, DayOfWeek, Category } from '../types';
 import { TaskItem } from './TaskItem';
 import { DAY_LABELS, DAYS_ORDER } from '../utils/dateUtils';
-import { Plus, Copy, Edit3, Layers } from 'lucide-react';
+import { Plus, Copy, Edit3, Layers, GripVertical } from 'lucide-react';
 
 interface RoutineManagerProps {
   tasks: Task[];
@@ -10,6 +10,7 @@ interface RoutineManagerProps {
   onAddTask: (dayOfWeek: DayOfWeek, title: string, category: Category, note?: string) => void;
   onUpdateTask: (taskId: string, updates: Partial<Omit<Task, 'id'>>) => void;
   onDeleteTask: (taskId: string) => void;
+  onReorderTasks: (dayOfWeek: DayOfWeek, sourceIndex: number, destinationIndex: number) => void;
   onCopyTasksToDays: (fromDay: DayOfWeek, targetDays: DayOfWeek[]) => void;
 }
 
@@ -19,6 +20,7 @@ export const RoutineManager: React.FC<RoutineManagerProps> = ({
   onAddTask,
   onUpdateTask,
   onDeleteTask,
+  onReorderTasks,
   onCopyTasksToDays,
 }) => {
   const [selectedDay, setSelectedDay] = useState<DayOfWeek>(initialDay);
@@ -31,7 +33,80 @@ export const RoutineManager: React.FC<RoutineManagerProps> = ({
   const [note, setNote] = useState('');
   const [copyTargets, setCopyTargets] = useState<DayOfWeek[]>([]);
 
+  // Drag and drop state (HTML5 + Touch)
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+
+  const touchStartIndexRef = useRef<number | null>(null);
+  const touchOverIndexRef = useRef<number | null>(null);
+
   const dayTasks = tasks.filter((t) => t.dayOfWeek === selectedDay);
+
+  // HTML5 Drag Handlers
+  const handleDragStart = (index: number, e: React.DragEvent) => {
+    setDraggedIndex(index);
+    if (e.dataTransfer) {
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', String(index));
+    }
+  };
+
+  const handleDragOver = (index: number, e: React.DragEvent) => {
+    e.preventDefault();
+    if (dragOverIndex !== index) {
+      setDragOverIndex(index);
+    }
+  };
+
+  const handleDrop = (index: number, e: React.DragEvent) => {
+    e.preventDefault();
+    if (draggedIndex !== null && draggedIndex !== index) {
+      onReorderTasks(selectedDay, draggedIndex, index);
+    }
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
+
+  // Touch Drag Handlers (Mobile / PWA support)
+  const handleTouchStart = (index: number) => {
+    touchStartIndexRef.current = index;
+    touchOverIndexRef.current = index;
+    setDraggedIndex(index);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartIndexRef.current === null) return;
+    const touch = e.touches[0];
+    const element = document.elementFromPoint(touch.clientX, touch.clientY);
+    const itemContainer = element?.closest('[data-task-index]');
+    if (itemContainer) {
+      const targetIndexStr = itemContainer.getAttribute('data-task-index');
+      if (targetIndexStr !== null) {
+        const targetIndex = parseInt(targetIndexStr, 10);
+        if (!isNaN(targetIndex) && touchOverIndexRef.current !== targetIndex) {
+          touchOverIndexRef.current = targetIndex;
+          setDragOverIndex(targetIndex);
+        }
+      }
+    }
+  };
+
+  const handleTouchEnd = () => {
+    const src = touchStartIndexRef.current;
+    const dst = touchOverIndexRef.current;
+    if (src !== null && dst !== null && src !== dst) {
+      onReorderTasks(selectedDay, src, dst);
+    }
+    touchStartIndexRef.current = null;
+    touchOverIndexRef.current = null;
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
 
   const handleCreateSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -146,13 +221,34 @@ export const RoutineManager: React.FC<RoutineManagerProps> = ({
       {/* Task List */}
       {dayTasks.length > 0 ? (
         <div className="space-y-2.5">
-          {dayTasks.map((task) => (
+          <p className="text-[11px] text-slate-400 flex items-center gap-1 px-1">
+            <GripVertical className="w-3.5 h-3.5 text-slate-400" />
+            <span>アイコンをドラッグして順序を変更できます</span>
+          </p>
+
+          {dayTasks.map((task, index) => (
             <TaskItem
               key={task.id}
               task={task}
               onEdit={openEditModal}
               onDelete={onDeleteTask}
               isReadOnly={true}
+              isDraggable={true}
+              isDragging={draggedIndex === index}
+              isDragOver={dragOverIndex === index && draggedIndex !== index}
+              containerProps={{
+                'data-task-index': index,
+                draggable: true,
+                onDragStart: (e) => handleDragStart(index, e),
+                onDragOver: (e) => handleDragOver(index, e),
+                onDrop: (e) => handleDrop(index, e),
+                onDragEnd: handleDragEnd,
+              }}
+              dragHandleProps={{
+                onTouchStart: () => handleTouchStart(index),
+                onTouchMove: handleTouchMove,
+                onTouchEnd: handleTouchEnd,
+              }}
             />
           ))}
         </div>
@@ -165,6 +261,11 @@ export const RoutineManager: React.FC<RoutineManagerProps> = ({
           <button
             onClick={() => setShowAddForm(true)}
             className="text-xs font-bold px-4 py-2 rounded-xl bg-ios-blue text-black shadow-ios active:scale-95"
+          >
+            ルーティンを追加する
+          </button>
+        </div>
+      )}e-95"
           >
             ルーティンを追加する
           </button>

@@ -19,6 +19,7 @@ export function App() {
     addTask,
     updateTask,
     deleteTask,
+    reorderTasks,
     copyTasksToDays,
     resetToDefaults,
     exportJSON,
@@ -74,6 +75,7 @@ export function App() {
             onAddTask={addTask}
             onUpdateTask={updateTask}
             onDeleteTask={deleteTask}
+            onReorderTasks={reorderTasks}
             onCopyTasksToDays={copyTasksToDays}
           />
         )}

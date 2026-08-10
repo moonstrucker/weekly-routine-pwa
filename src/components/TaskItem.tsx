@@ -1,5 +1,5 @@
 import React from 'react';
-import { Check, Trash2, Edit2, Sun, SunMedium, Moon, Clock } from 'lucide-react';
+import { Check, Trash2, Edit2, Sun, SunMedium, Moon, Clock, GripVertical } from 'lucide-react';
 import { Task, Category } from '../types';
 
 interface TaskItemProps {
@@ -8,6 +8,11 @@ interface TaskItemProps {
   onEdit?: (task: Task) => void;
   onDelete?: (taskId: string) => void;
   isReadOnly?: boolean;
+  isDraggable?: boolean;
+  isDragging?: boolean;
+  isDragOver?: boolean;
+  dragHandleProps?: React.HTMLAttributes<HTMLDivElement>;
+  containerProps?: React.HTMLAttributes<HTMLDivElement>;
 }
 
 export const TaskItem: React.FC<TaskItemProps> = ({
@@ -16,6 +21,11 @@ export const TaskItem: React.FC<TaskItemProps> = ({
   onEdit,
   onDelete,
   isReadOnly = false,
+  isDraggable = false,
+  isDragging = false,
+  isDragOver = false,
+  dragHandleProps = {},
+  containerProps = {},
 }) => {
   const getCategoryBadge = (category: Category) => {
     switch (category) {
@@ -33,7 +43,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
   const badge = getCategoryBadge(task.category);
 
   const handleCardClick = (e: React.MouseEvent) => {
-    if ((e.target as HTMLElement).closest('.action-button')) return;
+    if ((e.target as HTMLElement).closest('.action-button') || (e.target as HTMLElement).closest('.drag-handle')) return;
     if (onToggleComplete && !isReadOnly) {
       onToggleComplete(task.id);
     }
@@ -41,13 +51,29 @@ export const TaskItem: React.FC<TaskItemProps> = ({
 
   return (
     <div
+      {...containerProps}
       onClick={handleCardClick}
-      className={`group relative flex items-start gap-3.5 p-3.5 rounded-2xl border transition-all duration-200 cursor-pointer select-none active:scale-[0.98] ${
-        task.isCompleted
+      className={`group relative flex items-center gap-3 p-3.5 rounded-2xl border transition-all duration-200 cursor-pointer select-none active:scale-[0.98] ${
+        isDragging
+          ? 'bg-ios-card/40 border-ios-blue/60 opacity-30 scale-[0.98] shadow-none'
+          : isDragOver
+          ? 'bg-ios-cardHover border-ios-blue ring-2 ring-ios-blue/40 shadow-ios-lg scale-[1.01]'
+          : task.isCompleted
           ? 'bg-ios-card/40 border-white/5 opacity-55'
           : 'bg-ios-card border-white/10 hover:border-ios-blue/40 shadow-ios'
       }`}
     >
+      {/* Drag Handle */}
+      {isDraggable && (
+        <div
+          {...dragHandleProps}
+          className="drag-handle flex-shrink-0 cursor-grab active:cursor-grabbing text-slate-500 hover:text-ios-blue active:text-ios-blue transition-colors p-1 -ml-1 rounded-lg touch-none"
+          title="ドラッグして順序を変更"
+        >
+          <GripVertical className="w-5 h-5" />
+        </div>
+      )}
+
       {/* iOS Circular Checkbox */}
       {onToggleComplete && (
         <button
@@ -56,7 +82,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
             e.stopPropagation();
             onToggleComplete(task.id);
           }}
-          className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 mt-0.5 ${
+          className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
             task.isCompleted
               ? 'bg-ios-green border-ios-green text-black shadow-ios-green scale-105'
               : 'border-slate-500/80 hover:border-ios-blue group-hover:scale-105'
@@ -95,7 +121,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
 
       {/* Action Buttons */}
       {(onEdit || onDelete) && (
-        <div className="flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
+        <div className="flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity flex-shrink-0">
           {onEdit && (
             <button
               type="button"
