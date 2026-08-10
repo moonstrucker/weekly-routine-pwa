@@ -1,4 +1,4 @@
-const CACHE_NAME = 'routine-flow-v1';
+const CACHE_NAME = 'routine-flow-v2';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -35,31 +35,49 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch Event (Cache First for offline fallback)
+// Fetch Event (Network-First for HTML navigation to guarantee fresh Vercel deployments)
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        // Fetch fresh copy in background to update cache (Stale-While-Revalidate)
-        fetch(event.request).then((networkResponse) => {
+  const isHtml =
+    event.request.mode === 'navigate' ||
+    (event.request.headers.get('accept') && event.request.headers.get('accept').includes('text/html'));
+
+  if (isHtml) {
+    event.respondWith(
+      fetch(event.request)
+        .then((networkResponse) => {
           if (networkResponse && networkResponse.status === 200) {
+            const responseClone = networkResponse.clone();
             caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, networkResponse);
+              cache.put(event.request, responseClone);
             });
           }
-        }).catch(() => { /* offline silent catch */ });
+          return networkResponse;
+        })
+        .catch(() => {
+          return caches.match(event.request).then((cachedResponse) => {
+            return cachedResponse || caches.match('/index.html');
+          });
+        })
+    );
+    return;
+  }
 
-        return cachedResponse;
-      }
-
-      return fetch(event.request).catch(() => {
-        // If offline and request is for page, return cached index.html
-        if (event.request.headers.get('accept')?.includes('text/html')) {
-          return caches.match('/index.html');
+  // Network-First with Cache fallback for assets
+  event.respondWith(
+    fetch(event.request)
+      .then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          const responseClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseClone);
+          });
         }
-      });
-    })
+        return networkResponse;
+      })
+      .catch(() => {
+        return caches.match(event.request);
+      })
   );
 });

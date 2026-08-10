@@ -16,6 +16,8 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
       .register('/service-worker.js')
       .then((reg) => {
         console.log('[PWA] Service Worker registered successfully:', reg.scope);
+        // Force update check on page load so Vercel deployments take effect immediately
+        reg.update();
       })
       .catch((err) => {
         console.error('[PWA] Service Worker registration failed:', err);
