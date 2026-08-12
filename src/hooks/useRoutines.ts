@@ -5,6 +5,7 @@ import confetti from 'canvas-confetti';
 
 const STORAGE_KEY_TASKS = 'routine_flow_tasks_v1';
 const STORAGE_KEY_LAST_DATE = 'routine_flow_last_opened_date';
+const STORAGE_KEY_INIT_FLAG = 'routine_flow_initialized_v1';
 
 // Initial default preset tasks to give new users immediate value
 const DEFAULT_TASKS: Omit<Task, 'id' | 'isCompleted'>[] = [
@@ -47,10 +48,12 @@ export function useRoutines() {
   // Initialize and check date on mount & visibility change
   const checkAndInitData = useCallback(() => {
     const todayKey = getFormattedDateKey();
-    const storedLastDate = localStorage.getItem(STORAGE_KEY_LAST_DATE) || '';
+    const storedLastDate = localStorage.getItem(STORAGE_KEY_LAST_DATE);
     const storedTasksRaw = localStorage.getItem(STORAGE_KEY_TASKS);
+    const hasInitialized = localStorage.getItem(STORAGE_KEY_INIT_FLAG);
 
     let loadedTasks: Task[] = [];
+    const isFirstTime = !hasInitialized;
 
     if (storedTasksRaw) {
       try {
@@ -60,31 +63,35 @@ export function useRoutines() {
       }
     }
 
-    // First time setup with defaults
-    if (!storedTasksRaw || loadedTasks.length === 0) {
+    // 初回アプリ起動時のみ、初期サンプルデータを生成
+    if (isFirstTime) {
       loadedTasks = DEFAULT_TASKS.map((t, idx) => ({
         ...t,
         id: `default-${idx}-${Date.now()}`,
         isCompleted: false,
       }));
-    }
-
-    // Check if date changed (e.g., next day)
-    if (storedLastDate !== todayKey) {
-      console.log(`[Date Rollover Detected] Resetting task completion status from ${storedLastDate} to ${todayKey}`);
-      // Reset all completion flags for a fresh new day!
-      loadedTasks = loadedTasks.map((task) => ({
-        ...task,
-        isCompleted: false,
-        completedAt: undefined,
-      }));
-
+      localStorage.setItem(STORAGE_KEY_TASKS, JSON.stringify(loadedTasks));
       localStorage.setItem(STORAGE_KEY_LAST_DATE, todayKey);
+      localStorage.setItem(STORAGE_KEY_INIT_FLAG, 'true');
+    } else {
+      // 2回目以降の起動 / リロード時
+      // 最後に開いた日付が存在し、かつ「今日の日付と異なる場合」のみ完了ステータスをリセット（日替わり処理）
+      if (storedLastDate && storedLastDate !== todayKey) {
+        console.log(`[Date Rollover Detected] Resetting task completion status from ${storedLastDate} to ${todayKey}`);
+        loadedTasks = loadedTasks.map((task) => ({
+          ...task,
+          isCompleted: false,
+          completedAt: undefined,
+        }));
+        localStorage.setItem(STORAGE_KEY_TASKS, JSON.stringify(loadedTasks));
+        localStorage.setItem(STORAGE_KEY_LAST_DATE, todayKey);
+      } else if (!storedLastDate) {
+        localStorage.setItem(STORAGE_KEY_LAST_DATE, todayKey);
+      }
     }
 
     setTasks(loadedTasks);
     setLastOpenedDate(todayKey);
-    localStorage.setItem(STORAGE_KEY_TASKS, JSON.stringify(loadedTasks));
     setIsLoaded(true);
   }, []);
 
