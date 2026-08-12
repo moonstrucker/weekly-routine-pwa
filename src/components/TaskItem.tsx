@@ -11,8 +11,8 @@ interface TaskItemProps {
   isDraggable?: boolean;
   isDragging?: boolean;
   isDragOver?: boolean;
-  dragHandleProps?: React.HTMLAttributes<HTMLDivElement>;
-  containerProps?: React.HTMLAttributes<HTMLDivElement>;
+  dragHandleProps?: React.HTMLAttributes<HTMLDivElement> & Record<string, any>;
+  containerProps?: React.HTMLAttributes<HTMLDivElement> & Record<string, any>;
 }
 
 export const TaskItem: React.FC<TaskItemProps> = ({

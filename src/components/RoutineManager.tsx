@@ -43,7 +43,7 @@ export const RoutineManager: React.FC<RoutineManagerProps> = ({
   const dayTasks = tasks.filter((t) => t.dayOfWeek === selectedDay);
 
   // HTML5 Drag Handlers
-  const handleDragStart = (index: number, e: React.DragEvent) => {
+  const handleDragStart = (index: number, e: React.DragEvent<HTMLDivElement>) => {
     setDraggedIndex(index);
     if (e.dataTransfer) {
       e.dataTransfer.effectAllowed = 'move';
@@ -51,14 +51,14 @@ export const RoutineManager: React.FC<RoutineManagerProps> = ({
     }
   };
 
-  const handleDragOver = (index: number, e: React.DragEvent) => {
+  const handleDragOver = (index: number, e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     if (dragOverIndex !== index) {
       setDragOverIndex(index);
     }
   };
 
-  const handleDrop = (index: number, e: React.DragEvent) => {
+  const handleDrop = (index: number, e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     if (draggedIndex !== null && draggedIndex !== index) {
       onReorderTasks(selectedDay, draggedIndex, index);
@@ -79,7 +79,7 @@ export const RoutineManager: React.FC<RoutineManagerProps> = ({
     setDraggedIndex(index);
   };
 
-  const handleTouchMove = (e: React.TouchEvent) => {
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
     if (touchStartIndexRef.current === null) return;
     const touch = e.touches[0];
     const element = document.elementFromPoint(touch.clientX, touch.clientY);
