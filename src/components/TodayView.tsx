@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Task, Category, DayOfWeek } from '../types';
 import { TaskItem } from './TaskItem';
 import { getCurrentDayOfWeek, DAY_LABELS, DAYS_ORDER } from '../utils/dateUtils';
-import { Sparkles, Trophy, Plus, CheckCircle, Calendar } from 'lucide-react';
+import { Sparkles, Trophy, Plus, CheckCircle, Calendar, ChevronDown, ChevronUp, CheckCircle2 } from 'lucide-react';
 
 interface TodayViewProps {
   tasks: Task[];
@@ -23,12 +23,16 @@ export const TodayView: React.FC<TodayViewProps> = ({
   const [quickTitle, setQuickTitle] = useState('');
   const [quickCategory, setQuickCategory] = useState<Category>('anytime');
   const [showQuickAddModal, setShowQuickAddModal] = useState(false);
+  const [showCompletedAccordion, setShowCompletedAccordion] = useState(false);
 
   const dayTasks = tasks.filter((t) => t.dayOfWeek === viewingDay);
   const filteredTasks = dayTasks.filter((t) => {
     if (selectedCategory === 'all') return true;
     return t.category === selectedCategory;
   });
+
+  const uncompletedTasks = filteredTasks.filter((t) => !t.isCompleted);
+  const completedTasks = filteredTasks.filter((t) => t.isCompleted);
 
   const completedCount = dayTasks.filter((t) => t.isCompleted).length;
   const totalCount = dayTasks.length;
@@ -146,16 +150,22 @@ export const TodayView: React.FC<TodayViewProps> = ({
         </div>
       )}
 
-      {/* Task List */}
-      {filteredTasks.length > 0 ? (
+      {/* Active Uncompleted Tasks */}
+      {uncompletedTasks.length > 0 ? (
         <div className="space-y-2.5">
-          {filteredTasks.map((task) => (
+          {uncompletedTasks.map((task) => (
             <TaskItem
               key={task.id}
               task={task}
               onToggleComplete={onToggleComplete}
             />
           ))}
+        </div>
+      ) : totalCount > 0 && isAllCompleted ? (
+        <div className="p-6 text-center bg-ios-card/40 border border-ios-green/30 rounded-2xl flex flex-col items-center gap-2 animate-ios-pop">
+          <CheckCircle2 className="w-10 h-10 text-ios-green" />
+          <p className="text-sm font-bold text-white">すべてのタスクを達成しました！</p>
+          <p className="text-xs text-slate-400">本日のルーティンはすべて完了して表示からクリアされました。</p>
         </div>
       ) : (
         <div className="p-8 text-center bg-ios-card/50 border border-dashed border-white/10 rounded-2xl flex flex-col items-center gap-3">
@@ -184,6 +194,41 @@ export const TodayView: React.FC<TodayViewProps> = ({
               設定画面へ
             </button>
           </div>
+        </div>
+      )}
+
+      {/* Completed Tasks Accordion */}
+      {completedTasks.length > 0 && (
+        <div className="pt-2">
+          <button
+            onClick={() => setShowCompletedAccordion(!showCompletedAccordion)}
+            className="w-full flex items-center justify-between py-2.5 px-4 rounded-xl bg-ios-card/70 border border-white/10 text-xs text-slate-300 hover:text-white transition-all active:scale-[0.99] shadow-ios"
+          >
+            <span className="flex items-center gap-2 font-medium">
+              <CheckCircle className="w-4 h-4 text-ios-green" />
+              完了済みのタスク ({completedTasks.length}件)
+            </span>
+            {showCompletedAccordion ? (
+              <ChevronUp className="w-4 h-4 text-slate-400" />
+            ) : (
+              <ChevronDown className="w-4 h-4 text-slate-400" />
+            )}
+          </button>
+
+          {showCompletedAccordion && (
+            <div className="space-y-2 mt-2 pt-1 border-t border-white/5 animate-ios-pop">
+              <p className="text-[11px] text-slate-400 px-1 mb-1">
+                ※タップすると未完了に戻して再表示します
+              </p>
+              {completedTasks.map((task) => (
+                <TaskItem
+                  key={task.id}
+                  task={task}
+                  onToggleComplete={onToggleComplete}
+                />
+              ))}
+            </div>
+          )}
         </div>
       )}
 

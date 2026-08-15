@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Check, Trash2, Edit2, Sun, SunMedium, Moon, Clock, GripVertical } from 'lucide-react';
 import { Task, Category } from '../types';
+import { playTaskCompleteSound, playTaskRestoreSound } from '../utils/audioUtils';
+import { triggerHapticFeedback } from '../utils/hapticsUtils';
+import confetti from 'canvas-confetti';
 
 interface TaskItemProps {
   task: Task;
@@ -27,6 +30,8 @@ export const TaskItem: React.FC<TaskItemProps> = ({
   dragHandleProps = {},
   containerProps = {},
 }) => {
+  const [isDismissing, setIsDismissing] = useState(false);
+
   const getCategoryBadge = (category: Category) => {
     switch (category) {
       case 'morning':
@@ -42,9 +47,43 @@ export const TaskItem: React.FC<TaskItemProps> = ({
 
   const badge = getCategoryBadge(task.category);
 
-  const handleCardClick = (e: React.MouseEvent) => {
+  const handleToggleWithAnimation = (e: React.MouseEvent) => {
     if ((e.target as HTMLElement).closest('.action-button') || (e.target as HTMLElement).closest('.drag-handle')) return;
-    if (onToggleComplete && !isReadOnly) {
+    if (!onToggleComplete || isReadOnly || isDismissing) return;
+
+    if (!task.isCompleted) {
+      // 完了時の消去アニメーション開始
+      setIsDismissing(true);
+
+      // サウンド・振動
+      playTaskCompleteSound();
+      triggerHapticFeedback(20);
+
+      // 点击位置からの紙吹雪（Confetti）
+      const clientX = e.clientX || window.innerWidth / 2;
+      const clientY = e.clientY || window.innerHeight / 2;
+      confetti({
+        particleCount: 35,
+        spread: 50,
+        origin: {
+          x: clientX / window.innerWidth,
+          y: clientY / window.innerHeight,
+        },
+        colors: ['#10B981', '#06B6D4', '#F59E0B', '#EC4899'],
+        ticks: 120,
+        gravity: 1.2,
+        scalar: 0.7,
+      });
+
+      // アニメーション完了後に状態更新（親のタスク完了関数呼び出し）
+      setTimeout(() => {
+        onToggleComplete(task.id);
+        setIsDismissing(false);
+      }, 400);
+    } else {
+      // 未完了へ戻す（復元）
+      playTaskRestoreSound();
+      triggerHapticFeedback(12);
       onToggleComplete(task.id);
     }
   };
@@ -52,14 +91,16 @@ export const TaskItem: React.FC<TaskItemProps> = ({
   return (
     <div
       {...containerProps}
-      onClick={handleCardClick}
+      onClick={handleToggleWithAnimation}
       className={`group relative flex items-center gap-3 p-3.5 rounded-2xl border transition-all duration-200 cursor-pointer select-none active:scale-[0.98] ${
-        isDragging
+        isDismissing
+          ? 'animate-task-dismiss'
+          : isDragging
           ? 'bg-ios-card/40 border-ios-blue/60 opacity-30 scale-[0.98] shadow-none'
           : isDragOver
           ? 'bg-ios-cardHover border-ios-blue ring-2 ring-ios-blue/40 shadow-ios-lg scale-[1.01]'
           : task.isCompleted
-          ? 'bg-ios-card/40 border-white/5 opacity-55'
+          ? 'bg-ios-card/40 border-white/5 opacity-60 animate-task-restore'
           : 'bg-ios-card border-white/10 hover:border-ios-blue/40 shadow-ios'
       }`}
     >
@@ -80,16 +121,16 @@ export const TaskItem: React.FC<TaskItemProps> = ({
           type="button"
           onClick={(e) => {
             e.stopPropagation();
-            onToggleComplete(task.id);
+            handleToggleWithAnimation(e);
           }}
           className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
-            task.isCompleted
-              ? 'bg-ios-green border-ios-green text-black shadow-ios-green scale-105'
+            task.isCompleted || isDismissing
+              ? 'bg-ios-green border-ios-green text-black shadow-ios-green animate-check-pop'
               : 'border-slate-500/80 hover:border-ios-blue group-hover:scale-105'
           }`}
           aria-label={task.isCompleted ? '未完了に戻す' : '完了にする'}
         >
-          {task.isCompleted && <Check className="w-4 h-4 stroke-[3]" />}
+          {(task.isCompleted || isDismissing) && <Check className="w-4 h-4 stroke-[3]" />}
         </button>
       )}
 
@@ -106,7 +147,9 @@ export const TaskItem: React.FC<TaskItemProps> = ({
 
         <p
           className={`text-sm font-medium transition-all ${
-            task.isCompleted ? 'line-through text-slate-400 font-normal' : 'text-white'
+            task.isCompleted || isDismissing
+              ? 'line-through text-slate-400 font-normal'
+              : 'text-white'
           }`}
         >
           {task.title}

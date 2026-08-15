@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Task, DayOfWeek, Category } from '../types';
 import { getCurrentDayOfWeek, getFormattedDateKey } from '../utils/dateUtils';
+import { playAllCompleteFanfare } from '../utils/audioUtils';
 import confetti from 'canvas-confetti';
 
 const STORAGE_KEY_TASKS = 'routine_flow_tasks_v1';
@@ -134,15 +135,38 @@ export function useRoutines() {
 
       saveTasks(updated);
 
-      // Check if all today's tasks are completed to trigger confetti!
+      // Check if all today's tasks are completed to trigger confetti & fanfare!
       const todayTasks = updated.filter((t) => t.dayOfWeek === todayDay);
-      if (todayTasks.length > 0 && todayTasks.every((t) => t.isCompleted)) {
-        confetti({
-          particleCount: 80,
-          spread: 70,
-          origin: { y: 0.6 },
-          colors: ['#06B6D4', '#10B981', '#F59E0B', '#8B5CF6'],
-        });
+      const wasAllCompletedBefore = tasks.filter((t) => t.dayOfWeek === todayDay).every((t) => t.isCompleted);
+      const isNowAllCompleted = todayTasks.length > 0 && todayTasks.every((t) => t.isCompleted);
+
+      if (isNowAllCompleted && !wasAllCompletedBefore) {
+        playAllCompleteFanfare();
+
+        // Multi-burst fireworks confetti
+        const end = Date.now() + 1.2 * 1000;
+        const colors = ['#06B6D4', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899'];
+
+        (function frame() {
+          confetti({
+            particleCount: 4,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0 },
+            colors: colors,
+          });
+          confetti({
+            particleCount: 4,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1 },
+            colors: colors,
+          });
+
+          if (Date.now() < end) {
+            requestAnimationFrame(frame);
+          }
+        })();
       }
     },
     [tasks, saveTasks]
