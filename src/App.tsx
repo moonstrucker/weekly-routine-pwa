@@ -42,15 +42,15 @@ export function App() {
 
   if (!isLoaded) {
     return (
-      <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center gap-3 font-sans">
+      <div className="min-h-screen bg-ios-bg text-slate-900 flex flex-col items-center justify-center gap-3 font-sans">
         <Loader2 className="w-8 h-8 text-ios-blue animate-spin" />
-        <p className="text-xs font-semibold text-slate-400">RoutineFlow を読み込み中...</p>
+        <p className="text-xs font-semibold text-slate-500">RoutineFlow を読み込み中...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col selection:bg-ios-blue/30 font-sans">
+    <div className="min-h-screen bg-ios-bg text-slate-900 flex flex-col selection:bg-ios-blue/20 font-sans">
       {/* iPhone Status Bar with Dynamic Island */}
       <IPhoneStatusBar />
 

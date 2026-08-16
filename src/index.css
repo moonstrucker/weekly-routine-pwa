@@ -14,8 +14,8 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", sans-serif;
-  background-color: #000000;
-  color: #F2F2F7;
+  background-color: #F2F2F7;
+  color: #1C1C1E;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   -webkit-font-smoothing: antialiased;
@@ -24,13 +24,13 @@ body {
 
 /* iOS Glassmorphism backdrop */
 .ios-glass {
-  background-color: rgba(28, 28, 30, 0.75);
+  background-color: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
 }
 
 .ios-glass-header {
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(242, 242, 247, 0.85);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
 }

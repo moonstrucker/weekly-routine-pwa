@@ -35,13 +35,13 @@ export const TaskItem: React.FC<TaskItemProps> = ({
   const getCategoryBadge = (category: Category) => {
     switch (category) {
       case 'morning':
-        return { label: '朝', icon: <Sun className="w-3 h-3 text-ios-yellow" />, colorClass: 'bg-ios-yellow/15 text-ios-yellow border-ios-yellow/30' };
+        return { label: '朝', icon: <Sun className="w-3 h-3 text-amber-600" />, colorClass: 'bg-amber-50 text-amber-700 border-amber-200/80' };
       case 'afternoon':
-        return { label: '昼', icon: <SunMedium className="w-3 h-3 text-ios-cyan" />, colorClass: 'bg-ios-cyan/15 text-ios-cyan border-ios-cyan/30' };
+        return { label: '昼', icon: <SunMedium className="w-3 h-3 text-sky-600" />, colorClass: 'bg-sky-50 text-sky-700 border-sky-200/80' };
       case 'evening':
-        return { label: '夜', icon: <Moon className="w-3 h-3 text-ios-purple" />, colorClass: 'bg-ios-purple/15 text-ios-purple border-ios-purple/30' };
+        return { label: '夜', icon: <Moon className="w-3 h-3 text-purple-600" />, colorClass: 'bg-purple-50 text-purple-700 border-purple-200/80' };
       default:
-        return { label: 'いつでも', icon: <Clock className="w-3 h-3 text-ios-green" />, colorClass: 'bg-ios-green/15 text-ios-green border-ios-green/30' };
+        return { label: 'いつでも', icon: <Clock className="w-3 h-3 text-emerald-600" />, colorClass: 'bg-emerald-50 text-emerald-700 border-emerald-200/80' };
     }
   };
 
@@ -96,19 +96,19 @@ export const TaskItem: React.FC<TaskItemProps> = ({
         isDismissing
           ? 'animate-task-dismiss'
           : isDragging
-          ? 'bg-ios-card/40 border-ios-blue/60 opacity-30 scale-[0.98] shadow-none'
+          ? 'bg-white/40 border-ios-blue/60 opacity-30 scale-[0.98] shadow-none'
           : isDragOver
-          ? 'bg-ios-cardHover border-ios-blue ring-2 ring-ios-blue/40 shadow-ios-lg scale-[1.01]'
+          ? 'bg-blue-50/80 border-ios-blue ring-2 ring-ios-blue/40 shadow-ios scale-[1.01]'
           : task.isCompleted
-          ? 'bg-ios-card/40 border-white/5 opacity-60 animate-task-restore'
-          : 'bg-ios-card border-white/10 hover:border-ios-blue/40 shadow-ios'
+          ? 'bg-white/60 border-slate-200/60 opacity-60 animate-task-restore'
+          : 'bg-white border-slate-200/80 hover:border-ios-blue/40 shadow-ios'
       }`}
     >
       {/* Drag Handle */}
       {isDraggable && (
         <div
           {...dragHandleProps}
-          className="drag-handle flex-shrink-0 cursor-grab active:cursor-grabbing text-slate-500 hover:text-ios-blue active:text-ios-blue transition-colors p-1 -ml-1 rounded-lg touch-none"
+          className="drag-handle flex-shrink-0 cursor-grab active:cursor-grabbing text-slate-400 hover:text-ios-blue active:text-ios-blue transition-colors p-1 -ml-1 rounded-lg touch-none"
           title="ドラッグして順序を変更"
         >
           <GripVertical className="w-5 h-5" />
@@ -125,8 +125,8 @@ export const TaskItem: React.FC<TaskItemProps> = ({
           }}
           className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
             task.isCompleted || isDismissing
-              ? 'bg-ios-green border-ios-green text-black shadow-ios-green animate-check-pop'
-              : 'border-slate-500/80 hover:border-ios-blue group-hover:scale-105'
+              ? 'bg-ios-green border-ios-green text-white shadow-ios-green animate-check-pop'
+              : 'border-slate-300 hover:border-ios-blue group-hover:scale-105'
           }`}
           aria-label={task.isCompleted ? '未完了に戻す' : '完了にする'}
         >
@@ -149,14 +149,14 @@ export const TaskItem: React.FC<TaskItemProps> = ({
           className={`text-sm font-medium transition-all ${
             task.isCompleted || isDismissing
               ? 'line-through text-slate-400 font-normal'
-              : 'text-white'
+              : 'text-slate-900'
           }`}
         >
           {task.title}
         </p>
 
         {task.note && (
-          <p className="text-xs text-slate-400 mt-1 line-clamp-2 leading-relaxed font-sans">
+          <p className="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed font-sans">
             {task.note}
           </p>
         )}
@@ -172,7 +172,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
                 e.stopPropagation();
                 onEdit(task);
               }}
-              className="action-button p-1.5 rounded-lg text-slate-400 hover:text-ios-blue hover:bg-ios-cardHover transition-colors"
+              className="action-button p-1.5 rounded-lg text-slate-400 hover:text-ios-blue hover:bg-slate-100 transition-colors"
               title="編集"
             >
               <Edit2 className="w-4 h-4" />
@@ -185,7 +185,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
                 e.stopPropagation();
                 onDelete(task.id);
               }}
-              className="action-button p-1.5 rounded-lg text-slate-400 hover:text-ios-red hover:bg-ios-cardHover transition-colors"
+              className="action-button p-1.5 rounded-lg text-slate-400 hover:text-ios-red hover:bg-slate-100 transition-colors"
               title="削除"
             >
               <Trash2 className="w-4 h-4" />

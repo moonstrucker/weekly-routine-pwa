@@ -152,7 +152,7 @@ export const RoutineManager: React.FC<RoutineManagerProps> = ({
   return (
     <div className="space-y-4 pb-28">
       {/* iOS Segmented Day Control */}
-      <div className="flex rounded-2xl bg-ios-card border border-white/10 p-1 shadow-ios">
+      <div className="flex rounded-2xl bg-white border border-slate-200/80 p-1 shadow-ios">
         {DAYS_ORDER.map((day) => {
           const isSelected = day === selectedDay;
           const count = tasks.filter((t) => t.dayOfWeek === day).length;
@@ -167,12 +167,12 @@ export const RoutineManager: React.FC<RoutineManagerProps> = ({
               }}
               className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all flex flex-col items-center gap-0.5 active:scale-95 ${
                 isSelected
-                  ? 'bg-ios-blue text-black shadow-ios font-bold'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-ios-blue text-white shadow-ios font-bold'
+                  : 'text-slate-500 hover:text-slate-900'
               }`}
             >
               <span>{DAY_LABELS[day].short}</span>
-              <span className={`text-[10px] ${isSelected ? 'text-black/80 font-bold' : 'text-slate-500'}`}>{count}</span>
+              <span className={`text-[10px] ${isSelected ? 'text-white/90 font-bold' : 'text-slate-400'}`}>{count}</span>
             </button>
           );
         })}
@@ -181,10 +181,10 @@ export const RoutineManager: React.FC<RoutineManagerProps> = ({
       {/* Action Header */}
       <div className="flex items-center justify-between px-1">
         <div>
-          <h2 className="text-base font-bold text-white flex items-center gap-2">
+          <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
             {DAY_LABELS[selectedDay].full} の設定
           </h2>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-500">
             毎週{DAY_LABELS[selectedDay].short}曜日に繰り返し行うタスク
           </p>
         </div>
@@ -196,7 +196,7 @@ export const RoutineManager: React.FC<RoutineManagerProps> = ({
                 setCopyTargets(DAYS_ORDER.filter((d) => d !== selectedDay));
                 setShowCopyModal(true);
               }}
-              className="p-2 rounded-xl bg-ios-card border border-white/10 text-slate-300 hover:text-ios-blue transition-all active:scale-95"
+              className="p-2 rounded-xl bg-white border border-slate-200 text-slate-600 hover:text-ios-blue transition-all active:scale-95 shadow-sm"
               title="他曜日にコピー"
             >
               <Copy className="w-4 h-4" />
@@ -210,7 +210,7 @@ export const RoutineManager: React.FC<RoutineManagerProps> = ({
               setCategory('anytime');
               setShowAddForm(true);
             }}
-            className="flex items-center gap-1 px-3 py-2 rounded-xl bg-ios-blue text-black font-bold text-xs shadow-ios active:scale-95"
+            className="flex items-center gap-1 px-3 py-2 rounded-xl bg-ios-blue text-white font-bold text-xs shadow-ios active:scale-95"
           >
             <Plus className="w-4 h-4 stroke-[3]" />
             新規登録
@@ -221,7 +221,7 @@ export const RoutineManager: React.FC<RoutineManagerProps> = ({
       {/* Task List */}
       {dayTasks.length > 0 ? (
         <div className="space-y-2.5">
-          <p className="text-[11px] text-slate-400 flex items-center gap-1 px-1">
+          <p className="text-[11px] text-slate-500 flex items-center gap-1 px-1">
             <GripVertical className="w-3.5 h-3.5 text-slate-400" />
             <span>アイコンをドラッグして順序を変更できます</span>
           </p>
@@ -253,14 +253,14 @@ export const RoutineManager: React.FC<RoutineManagerProps> = ({
           ))}
         </div>
       ) : (
-        <div className="p-8 text-center bg-ios-card/40 border border-dashed border-white/10 rounded-2xl flex flex-col items-center gap-3">
-          <Layers className="w-8 h-8 text-slate-500" />
-          <p className="text-sm font-semibold text-slate-300">
+        <div className="p-8 text-center bg-white border border-dashed border-slate-300 rounded-2xl flex flex-col items-center gap-3 shadow-sm">
+          <Layers className="w-8 h-8 text-slate-400" />
+          <p className="text-sm font-semibold text-slate-700">
             {DAY_LABELS[selectedDay].short}曜日のルーティンは未登録です
           </p>
           <button
             onClick={() => setShowAddForm(true)}
-            className="text-xs font-bold px-4 py-2 rounded-xl bg-ios-blue text-black shadow-ios active:scale-95"
+            className="text-xs font-bold px-4 py-2 rounded-xl bg-ios-blue text-white shadow-ios active:scale-95"
           >
             ルーティンを追加する
           </button>
@@ -269,17 +269,17 @@ export const RoutineManager: React.FC<RoutineManagerProps> = ({
 
       {/* Add Sheet */}
       {showAddForm && (
-        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-end justify-center sm:items-center p-0 sm:p-4 animate-fade-in">
-          <div className="bg-ios-card border-t sm:border border-white/15 rounded-t-3xl sm:rounded-3xl p-6 w-full max-w-sm shadow-2xl space-y-4">
-            <div className="w-12 h-1 bg-white/30 rounded-full mx-auto sm:hidden -mt-2 mb-2" />
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-md flex items-end justify-center sm:items-center p-0 sm:p-4 animate-fade-in">
+          <div className="bg-white border-t sm:border border-slate-200 rounded-t-3xl sm:rounded-3xl p-6 w-full max-w-sm shadow-2xl space-y-4">
+            <div className="w-12 h-1 bg-slate-300 rounded-full mx-auto sm:hidden -mt-2 mb-2" />
             <div className="flex justify-between items-center">
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
+              <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
                 <Plus className="w-5 h-5 text-ios-blue" />
                 {DAY_LABELS[selectedDay].short}曜日に新規追加
               </h3>
               <button
                 onClick={() => setShowAddForm(false)}
-                className="w-7 h-7 rounded-full bg-ios-cardHover text-slate-400 flex items-center justify-center font-bold text-sm"
+                className="w-7 h-7 rounded-full bg-slate-100 text-slate-500 hover:text-slate-800 flex items-center justify-center font-bold text-sm"
               >
                 ✕
               </button>
@@ -287,7 +287,7 @@ export const RoutineManager: React.FC<RoutineManagerProps> = ({
 
             <form onSubmit={handleCreateSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1">
+                <label className="block text-xs font-medium text-slate-600 mb-1">
                   タスク名
                 </label>
                 <input
@@ -295,19 +295,19 @@ export const RoutineManager: React.FC<RoutineManagerProps> = ({
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="例: メールチェック、ジムで筋トレ"
-                  className="w-full bg-black border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-ios-blue"
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-ios-blue focus:bg-white transition-colors"
                   autoFocus
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1">
+                <label className="block text-xs font-medium text-slate-600 mb-1">
                   時間帯・カテゴリ
                 </label>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value as Category)}
-                  className="w-full bg-black border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-ios-blue"
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-ios-blue focus:bg-white transition-colors"
                 >
                   <option value="morning">朝 (Morning)</option>
                   <option value="afternoon">昼 (Afternoon)</option>
@@ -317,7 +317,7 @@ export const RoutineManager: React.FC<RoutineManagerProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1">
+                <label className="block text-xs font-medium text-slate-600 mb-1">
                   メモ (任意)
                 </label>
                 <textarea
@@ -325,7 +325,7 @@ export const RoutineManager: React.FC<RoutineManagerProps> = ({
                   onChange={(e) => setNote(e.target.value)}
                   placeholder="メモや補足情報"
                   rows={2}
-                  className="w-full bg-black border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-ios-blue resize-none"
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-ios-blue focus:bg-white resize-none transition-colors"
                 />
               </div>
 
@@ -333,14 +333,14 @@ export const RoutineManager: React.FC<RoutineManagerProps> = ({
                 <button
                   type="button"
                   onClick={() => setShowAddForm(false)}
-                  className="flex-1 py-2.5 rounded-xl border border-white/15 text-xs font-semibold text-slate-400"
+                  className="flex-1 py-2.5 rounded-xl border border-slate-300 text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors"
                 >
                   キャンセル
                 </button>
                 <button
                   type="submit"
                   disabled={!title.trim()}
-                  className="flex-1 py-2.5 rounded-xl bg-ios-blue text-black text-xs font-bold shadow-ios active:scale-95 disabled:opacity-40"
+                  className="flex-1 py-2.5 rounded-xl bg-ios-blue text-white text-xs font-bold shadow-ios active:scale-95 disabled:opacity-40"
                 >
                   登録する
                 </button>
@@ -352,17 +352,17 @@ export const RoutineManager: React.FC<RoutineManagerProps> = ({
 
       {/* Edit Sheet */}
       {editingTask && (
-        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-end justify-center sm:items-center p-0 sm:p-4 animate-fade-in">
-          <div className="bg-ios-card border-t sm:border border-white/15 rounded-t-3xl sm:rounded-3xl p-6 w-full max-w-sm shadow-2xl space-y-4">
-            <div className="w-12 h-1 bg-white/30 rounded-full mx-auto sm:hidden -mt-2 mb-2" />
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-md flex items-end justify-center sm:items-center p-0 sm:p-4 animate-fade-in">
+          <div className="bg-white border-t sm:border border-slate-200 rounded-t-3xl sm:rounded-3xl p-6 w-full max-w-sm shadow-2xl space-y-4">
+            <div className="w-12 h-1 bg-slate-300 rounded-full mx-auto sm:hidden -mt-2 mb-2" />
             <div className="flex justify-between items-center">
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
+              <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
                 <Edit3 className="w-5 h-5 text-ios-blue" />
                 タスク編集
               </h3>
               <button
                 onClick={() => setEditingTask(null)}
-                className="w-7 h-7 rounded-full bg-ios-cardHover text-slate-400 flex items-center justify-center font-bold text-sm"
+                className="w-7 h-7 rounded-full bg-slate-100 text-slate-500 hover:text-slate-800 flex items-center justify-center font-bold text-sm"
               >
                 ✕
               </button>
@@ -370,25 +370,25 @@ export const RoutineManager: React.FC<RoutineManagerProps> = ({
 
             <form onSubmit={handleUpdateSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1">
+                <label className="block text-xs font-medium text-slate-600 mb-1">
                   タスク名
                 </label>
                 <input
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full bg-black border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-ios-blue"
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-ios-blue focus:bg-white transition-colors"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1">
+                <label className="block text-xs font-medium text-slate-600 mb-1">
                   時間帯・カテゴリ
                 </label>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value as Category)}
-                  className="w-full bg-black border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-ios-blue"
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-ios-blue focus:bg-white transition-colors"
                 >
                   <option value="morning">朝 (Morning)</option>
                   <option value="afternoon">昼 (Afternoon)</option>
@@ -398,14 +398,14 @@ export const RoutineManager: React.FC<RoutineManagerProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1">
+                <label className="block text-xs font-medium text-slate-600 mb-1">
                   メモ
                 </label>
                 <textarea
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   rows={2}
-                  className="w-full bg-black border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-ios-blue resize-none"
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-ios-blue focus:bg-white resize-none transition-colors"
                 />
               </div>
 
@@ -413,14 +413,14 @@ export const RoutineManager: React.FC<RoutineManagerProps> = ({
                 <button
                   type="button"
                   onClick={() => setEditingTask(null)}
-                  className="flex-1 py-2.5 rounded-xl border border-white/15 text-xs font-semibold text-slate-400"
+                  className="flex-1 py-2.5 rounded-xl border border-slate-300 text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors"
                 >
                   キャンセル
                 </button>
                 <button
                   type="submit"
                   disabled={!title.trim()}
-                  className="flex-1 py-2.5 rounded-xl bg-ios-blue text-black text-xs font-bold shadow-ios active:scale-95 disabled:opacity-40"
+                  className="flex-1 py-2.5 rounded-xl bg-ios-blue text-white text-xs font-bold shadow-ios active:scale-95 disabled:opacity-40"
                 >
                   保存する
                 </button>
@@ -432,22 +432,22 @@ export const RoutineManager: React.FC<RoutineManagerProps> = ({
 
       {/* Copy Sheet */}
       {showCopyModal && (
-        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-end justify-center sm:items-center p-0 sm:p-4 animate-fade-in">
-          <div className="bg-ios-card border-t sm:border border-white/15 rounded-t-3xl sm:rounded-3xl p-6 w-full max-w-sm shadow-2xl space-y-4">
-            <div className="w-12 h-1 bg-white/30 rounded-full mx-auto sm:hidden -mt-2 mb-2" />
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-md flex items-end justify-center sm:items-center p-0 sm:p-4 animate-fade-in">
+          <div className="bg-white border-t sm:border border-slate-200 rounded-t-3xl sm:rounded-3xl p-6 w-full max-w-sm shadow-2xl space-y-4">
+            <div className="w-12 h-1 bg-slate-300 rounded-full mx-auto sm:hidden -mt-2 mb-2" />
             <div className="flex justify-between items-center">
-              <h3 className="text-base font-bold text-white">
+              <h3 className="text-base font-bold text-slate-900">
                 {DAY_LABELS[selectedDay].short}曜日のタスクをコピー
               </h3>
               <button
                 onClick={() => setShowCopyModal(false)}
-                className="w-7 h-7 rounded-full bg-ios-cardHover text-slate-400 flex items-center justify-center font-bold text-sm"
+                className="w-7 h-7 rounded-full bg-slate-100 text-slate-500 hover:text-slate-800 flex items-center justify-center font-bold text-sm"
               >
                 ✕
               </button>
             </div>
 
-            <p className="text-xs text-slate-300">
+            <p className="text-xs text-slate-600">
               コピー先の曜日を選択してください:
             </p>
 
@@ -460,8 +460,8 @@ export const RoutineManager: React.FC<RoutineManagerProps> = ({
                     onClick={() => toggleCopyTarget(day)}
                     className={`flex items-center gap-2.5 p-2.5 rounded-xl border text-xs font-medium cursor-pointer transition-all active:scale-95 ${
                       isChecked
-                        ? 'bg-ios-blue/15 border-ios-blue text-ios-blue font-bold'
-                        : 'bg-black border-white/15 text-slate-400'
+                        ? 'bg-blue-50 border-ios-blue text-ios-blue font-bold'
+                        : 'bg-slate-50 border-slate-200 text-slate-600'
                     }`}
                   >
                     <input
@@ -480,7 +480,7 @@ export const RoutineManager: React.FC<RoutineManagerProps> = ({
               <button
                 type="button"
                 onClick={() => setShowCopyModal(false)}
-                className="flex-1 py-2.5 rounded-xl border border-white/15 text-xs font-semibold text-slate-400"
+                className="flex-1 py-2.5 rounded-xl border border-slate-300 text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors"
               >
                 キャンセル
               </button>
@@ -488,7 +488,7 @@ export const RoutineManager: React.FC<RoutineManagerProps> = ({
                 type="button"
                 onClick={handleCopySubmit}
                 disabled={copyTargets.length === 0}
-                className="flex-1 py-2.5 rounded-xl bg-ios-blue text-black text-xs font-bold shadow-ios active:scale-95 disabled:opacity-40"
+                className="flex-1 py-2.5 rounded-xl bg-ios-blue text-white text-xs font-bold shadow-ios active:scale-95 disabled:opacity-40"
               >
                 {copyTargets.length} 曜日にコピー
               </button>

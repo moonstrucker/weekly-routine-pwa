@@ -14,7 +14,7 @@ export const Navigation: React.FC<NavigationProps> = ({
   todayUncompletedCount,
 }) => {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-[#1C1C1E]/90 backdrop-blur-2xl border-t border-white/10 pt-2 pb-1.5 px-6 select-none">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/85 backdrop-blur-2xl border-t border-slate-200/80 pt-2 pb-1.5 px-6 select-none">
       <div className="max-w-md mx-auto flex flex-col gap-1">
         <div className="flex justify-around items-center">
           {/* Today Tab */}
@@ -23,7 +23,7 @@ export const Navigation: React.FC<NavigationProps> = ({
             className={`relative flex flex-col items-center gap-0.5 py-1 px-4 transition-all duration-200 ${
               activeTab === 'today'
                 ? 'text-ios-blue font-bold scale-105'
-                : 'text-slate-400 hover:text-slate-200 font-medium'
+                : 'text-slate-500 hover:text-slate-800 font-medium'
             }`}
           >
             <div className="relative">
@@ -43,7 +43,7 @@ export const Navigation: React.FC<NavigationProps> = ({
             className={`relative flex flex-col items-center gap-0.5 py-1 px-4 transition-all duration-200 ${
               activeTab === 'routine'
                 ? 'text-ios-blue font-bold scale-105'
-                : 'text-slate-400 hover:text-slate-200 font-medium'
+                : 'text-slate-500 hover:text-slate-800 font-medium'
             }`}
           >
             <CalendarDays className="w-5 h-5 stroke-[2.2]" />
@@ -56,7 +56,7 @@ export const Navigation: React.FC<NavigationProps> = ({
             className={`relative flex flex-col items-center gap-0.5 py-1 px-4 transition-all duration-200 ${
               activeTab === 'settings'
                 ? 'text-ios-blue font-bold scale-105'
-                : 'text-slate-400 hover:text-slate-200 font-medium'
+                : 'text-slate-500 hover:text-slate-800 font-medium'
             }`}
           >
             <Settings className="w-5 h-5 stroke-[2.2]" />
@@ -65,7 +65,7 @@ export const Navigation: React.FC<NavigationProps> = ({
         </div>
 
         {/* iOS Home Indicator Bar */}
-        <div className="w-32 h-1 bg-white/40 rounded-full mx-auto mt-1" />
+        <div className="w-32 h-1 bg-slate-400/60 rounded-full mx-auto mt-1" />
       </div>
     </nav>
   );
