@@ -88,6 +88,24 @@ export const TaskItem: React.FC<TaskItemProps> = ({
     }
   };
 
+  const getPanelStyle = (category: Category, isCompleted: boolean) => {
+    if (isCompleted) {
+      return 'bg-slate-100/70 border-slate-200/60 opacity-60';
+    }
+    switch (category) {
+      case 'morning':
+        return 'bg-[#FFFBEB] border-amber-200/80 hover:border-amber-400/60 hover:bg-[#FFF7ED] shadow-sm';
+      case 'afternoon':
+        return 'bg-[#F0F9FF] border-sky-200/80 hover:border-sky-400/60 hover:bg-[#E0F2FE] shadow-sm';
+      case 'evening':
+        return 'bg-[#F5F3FF] border-purple-200/80 hover:border-purple-400/60 hover:bg-[#EDE9FE] shadow-sm';
+      default:
+        return 'bg-[#F0FDF4] border-emerald-200/80 hover:border-emerald-400/60 hover:bg-[#DCFCE7] shadow-sm';
+    }
+  };
+
+  const panelStyle = getPanelStyle(task.category, task.isCompleted);
+
   return (
     <div
       {...containerProps}
@@ -96,12 +114,12 @@ export const TaskItem: React.FC<TaskItemProps> = ({
         isDismissing
           ? 'animate-task-dismiss'
           : isDragging
-          ? 'bg-white/40 border-ios-blue/60 opacity-30 scale-[0.98] shadow-none'
+          ? 'bg-blue-50/40 border-ios-blue/60 opacity-30 scale-[0.98] shadow-none'
           : isDragOver
-          ? 'bg-blue-50/80 border-ios-blue ring-2 ring-ios-blue/40 shadow-ios scale-[1.01]'
+          ? 'bg-blue-100/80 border-ios-blue ring-2 ring-ios-blue/40 shadow-ios scale-[1.01]'
           : task.isCompleted
-          ? 'bg-white/60 border-slate-200/60 opacity-60 animate-task-restore'
-          : 'bg-white border-slate-200/80 hover:border-ios-blue/40 shadow-ios'
+          ? `${panelStyle} animate-task-restore`
+          : panelStyle
       }`}
     >
       {/* Drag Handle */}
