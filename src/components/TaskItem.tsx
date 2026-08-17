@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Check, Trash2, Edit2, Sun, SunMedium, Moon, Clock, GripVertical } from 'lucide-react';
 import { Task, Category } from '../types';
-import { playTaskCompleteSound, playTaskRestoreSound } from '../utils/audioUtils';
+import { playTaskCompleteSound, playTaskRestoreSound, unlockAudioContext } from '../utils/audioUtils';
 import { triggerHapticFeedback } from '../utils/hapticsUtils';
 import confetti from 'canvas-confetti';
 
@@ -50,6 +50,8 @@ export const TaskItem: React.FC<TaskItemProps> = ({
   const handleToggleWithAnimation = (e: React.MouseEvent) => {
     if ((e.target as HTMLElement).closest('.action-button') || (e.target as HTMLElement).closest('.drag-handle')) return;
     if (!onToggleComplete || isReadOnly || isDismissing) return;
+
+    unlockAudioContext();
 
     if (!task.isCompleted) {
       // 完了時の消去アニメーション開始
