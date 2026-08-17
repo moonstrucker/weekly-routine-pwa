@@ -35,13 +35,13 @@ export const TaskItem: React.FC<TaskItemProps> = ({
   const getCategoryBadge = (category: Category) => {
     switch (category) {
       case 'morning':
-        return { label: '朝', icon: <Sun className="w-3 h-3 text-amber-600" />, colorClass: 'bg-amber-50 text-amber-700 border-amber-200/80' };
+        return { label: '朝', icon: <Sun className="w-3 h-3 text-amber-700" />, colorClass: 'bg-amber-100/90 text-amber-900 border-amber-300/90' };
       case 'afternoon':
-        return { label: '昼', icon: <SunMedium className="w-3 h-3 text-sky-600" />, colorClass: 'bg-sky-50 text-sky-700 border-sky-200/80' };
+        return { label: '昼', icon: <SunMedium className="w-3 h-3 text-sky-700" />, colorClass: 'bg-sky-100/90 text-sky-900 border-sky-300/90' };
       case 'evening':
-        return { label: '夜', icon: <Moon className="w-3 h-3 text-purple-600" />, colorClass: 'bg-purple-50 text-purple-700 border-purple-200/80' };
+        return { label: '夜', icon: <Moon className="w-3 h-3 text-purple-700" />, colorClass: 'bg-purple-100/90 text-purple-900 border-purple-300/90' };
       default:
-        return { label: 'いつでも', icon: <Clock className="w-3 h-3 text-emerald-600" />, colorClass: 'bg-emerald-50 text-emerald-700 border-emerald-200/80' };
+        return { label: 'いつでも', icon: <Clock className="w-3 h-3 text-emerald-700" />, colorClass: 'bg-emerald-100/90 text-emerald-900 border-emerald-300/90' };
     }
   };
 
@@ -92,17 +92,17 @@ export const TaskItem: React.FC<TaskItemProps> = ({
 
   const getPanelStyle = (category: Category, isCompleted: boolean) => {
     if (isCompleted) {
-      return 'bg-slate-100/70 border-slate-200/60 opacity-60';
+      return 'bg-slate-200/60 border-slate-300/60 opacity-60';
     }
     switch (category) {
       case 'morning':
-        return 'bg-[#FFFBEB] border-amber-200/80 hover:border-amber-400/60 hover:bg-[#FFF7ED] shadow-sm';
+        return 'bg-[#FEF3C7]/80 border-amber-300/80 hover:border-amber-400 hover:bg-[#FDE68A]/80 shadow-sm';
       case 'afternoon':
-        return 'bg-[#F0F9FF] border-sky-200/80 hover:border-sky-400/60 hover:bg-[#E0F2FE] shadow-sm';
+        return 'bg-[#E0F2FE]/85 border-sky-300/80 hover:border-sky-400 hover:bg-[#BAE6FD]/85 shadow-sm';
       case 'evening':
-        return 'bg-[#F5F3FF] border-purple-200/80 hover:border-purple-400/60 hover:bg-[#EDE9FE] shadow-sm';
+        return 'bg-[#EDE9FE]/85 border-purple-300/80 hover:border-purple-400 hover:bg-[#DDD6FE]/85 shadow-sm';
       default:
-        return 'bg-[#F0FDF4] border-emerald-200/80 hover:border-emerald-400/60 hover:bg-[#DCFCE7] shadow-sm';
+        return 'bg-[#DCFCE7]/85 border-emerald-300/80 hover:border-emerald-400 hover:bg-[#A7F3D0]/85 shadow-sm';
     }
   };
 
